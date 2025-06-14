@@ -13,13 +13,15 @@ def login():
     # Code to validate log in
     username = request.json.get('username')
     password = request.json.get('password')
+    remember = True if request.json.get('remember') else False
 
     # if the information is incorrect, try again
     user = User.query.filter_by(username=username).first()
     if not user or not check_password_hash(user.password, password):
         return jsonify({"msg": "Please check your login details and try again."}), 401
     
-    access_token = create_access_token(identity=str(user.id))
+    expires = timedelta(days=30) if remember else timedelta(minutes=15)
+    access_token = create_access_token(identity=str(user.id), expires_delta=expires)
     return jsonify({"access_token": access_token}), 200
 
 
