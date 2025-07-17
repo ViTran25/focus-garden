@@ -1,9 +1,19 @@
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import logo from "./assets/logo.jpg";
-import { useState } from "react";
+import { createContext, useState } from "react";
+import useToken from "./useToken";
+
+export const AppContext = createContext({
+  token: "",
+  setToken: () => {},
+});
 
 function App() {
+  // Token for authorization
+  const { token, setToken } = useToken();
+
+  // isActive for Nav-burger
   const [isActive, setIsActive] = useState(false);
 
   return (
@@ -39,29 +49,52 @@ function App() {
                 id="navMenu"
               >
                 <div className="navbar-start">
-                  <Link
-                    to="dashboard"
-                    className="navbar-item has-text-success-25"
-                  >
-                    <strong>Dashboard</strong>
-                  </Link>
-                  <Link to="tasks" className="navbar-item has-text-success-25">
-                    <strong>Tasks</strong>
-                  </Link>
+                  {token ? (
+                    <>
+                      <Link
+                        to="dashboard"
+                        className="navbar-item has-text-success-25"
+                      >
+                        <strong>Dashboard</strong>
+                      </Link>
+                      <Link
+                        to="tasks"
+                        className="navbar-item has-text-success-25"
+                      >
+                        <strong>Tasks</strong>
+                      </Link>
+                    </>
+                  ) : null}
                 </div>
 
                 <div className="navbar-end">
                   <div className="navbar-item">
                     <div className="buttons ">
-                      <Link to="signup" className="button is-primary is-normal">
-                        <strong>Sign Up</strong>
-                      </Link>
-                      <Link
-                        to="login"
-                        className="button is-success is-light is-normal"
-                      >
-                        Login
-                      </Link>
+                      {token ? (
+                        <>
+                          <button
+                            onClick={() => setToken({ access_token: null })}
+                            className="button is-primary is-danger"
+                          >
+                            Log Out
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            to="signup"
+                            className="button is-primary is-normal"
+                          >
+                            <strong>Sign Up</strong>
+                          </Link>
+                          <Link
+                            to="login"
+                            className="button is-success is-light is-normal"
+                          >
+                            Login
+                          </Link>
+                        </>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -72,7 +105,9 @@ function App() {
 
         <div className="hero-body">
           <div className="container">
-            <Outlet />
+            <AppContext.Provider value={{ token, setToken }}>
+              <Outlet />
+            </AppContext.Provider>
           </div>
         </div>
       </section>

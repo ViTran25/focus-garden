@@ -1,19 +1,53 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { AppContext } from "../App";
+import { Navigate } from "react-router-dom";
+
+async function signupUser(userInfo) {
+  try {
+    const response = await fetch("http://127.0.0.1:5000/signup", {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: Status ${response.status}`);
+    }
+    console.log(response.json());
+    return true;
+  } catch (err) {
+    console.log(err);
+    return false;
+  }
+}
 
 function Signup() {
-  const [userName, setUserName] = useState("");
+  const { token } = useContext(AppContext);
+  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ userName, email, password });
+    const result = await signupUser({ username, email, password });
+    setSuccess(result);
   };
+
+  if (token != null) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  if (success) {
+    return <Navigate to="/login" replace />;
+  }
 
   return (
     <div>
       <h1 className="title">Sign Up</h1>
-      <form action="">
+      <form action="" onSubmit={handleSubmit}>
         <div className="field has-text-left">
           <label className="label" htmlFor="username">
             Username
@@ -22,9 +56,9 @@ function Signup() {
             <input
               className="input"
               type="text"
-              name={userName}
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
+              name={username}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               id="username"
               placeholder="Username"
               required
@@ -67,7 +101,7 @@ function Signup() {
           </div>
         </div>
 
-        <button className="button is-info" type="submit" onClick={handleSubmit}>
+        <button className="button is-info" type="submit">
           Sign Up
         </button>
       </form>

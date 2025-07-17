@@ -31,10 +31,10 @@ function Task() {
     <div>
       <h1 className="title">Your Tasks</h1>
       <div className="container">
-        <ul className="list">
+        <ul className="grid is-col-min-12">
           {tasks.map((task) => {
             return (
-              <div>
+              <div className="cell" key={task.title}>
                 <li
                   className={`card ${
                     task.priority === "high"
@@ -42,7 +42,7 @@ function Task() {
                       : task.priority === "medium"
                       ? "has-background-warning-60 has-text-warning-invert"
                       : "has-background-light has-text-success-invert"
-                  } my-3`}
+                  } m-2`}
                   key={task.title}
                 >
                   <header className="card-header"></header>

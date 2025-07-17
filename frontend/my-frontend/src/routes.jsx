@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Task from "./pages/Tasks.jsx";
+import ProtectedRoutes from "./pages/ProtectedRoutes.jsx";
 
 const routes = [
   {
@@ -13,10 +14,15 @@ const routes = [
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <DefaultProfile /> },
-      { path: "dashboard", element: <Dashboard /> },
       { path: "login", element: <Login /> },
       { path: "signup", element: <Signup /> },
-      { path: "tasks", element: <Task /> },
+      {
+        element: <ProtectedRoutes />,
+        children: [
+          { path: "dashboard", element: <Dashboard /> },
+          { path: "tasks", element: <Task /> },
+        ],
+      },
     ],
   },
 ];
