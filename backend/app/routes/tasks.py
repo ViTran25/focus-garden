@@ -1,3 +1,4 @@
+import sys
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
@@ -31,13 +32,18 @@ def get_tasks():
 def create_task():
     user_id = get_jwt_identity()
     data = request.get_json()
+    print("Received data:", data, file=sys.stderr)
+    try:
+        due_date = datetime.strptime(data.get('due_date'), "%Y-%m-%dT%H:%M:%S.%fZ") if data.get('due_date') else datetime.now()
+    except Exception as e:
+        return jsonify({'error': 'Invalid due_date format'}), 400
 
     # Create new task with the data
     new_task = Task(
             title=data.get('title'), 
             description=data.get('description', ""), 
-            due_date=data.get('due_date', datetime.now()),
-            priority=data.get('priority', "medium"),
+            due_date=due_date,
+            priority=data.get('priority', 'Medium'),
             tags=data.get('tags', ""),
             is_done=False,
             user_id=user_id
