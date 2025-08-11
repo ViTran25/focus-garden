@@ -31,6 +31,7 @@ function Login() {
   // States for login information
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
 
   // Error for wrong credential information
   const [error, setError] = useState("");
@@ -40,6 +41,7 @@ function Login() {
     const tokenResponse = await loginUser({
       username,
       password,
+      remember,
     });
 
     if (!tokenResponse || !tokenResponse.access_token) {
@@ -92,6 +94,18 @@ function Login() {
               required
             />
           </div>
+        </div>
+
+        <div className="field has-text-left">
+          <label className="label checkbox" htmlFor="remember">
+            <input
+              type="checkbox"
+              name="remember"
+              onChange={(e) => setRemember(e.target.checked)}
+              id="remember"
+            />{" "}
+            Remember me
+          </label>
         </div>
 
         <button className="button is-info" type="submit">

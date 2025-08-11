@@ -20,7 +20,7 @@ def login():
     if not user or not check_password_hash(user.password, password):
         return jsonify({"msg": "Please check your login details and try again."}), 401
     
-    expires = timedelta(days=30) if remember else timedelta(minutes=15)
+    expires = timedelta(days=30) if remember else timedelta(minutes=30)
     access_token = create_access_token(identity=str(user.id), expires_delta=expires)
     return jsonify({"access_token": access_token}), 200
 
