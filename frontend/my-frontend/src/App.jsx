@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import logo from "./assets/logo.jpg";
 import { createContext, useEffect, useRef, useState } from "react";
 import useToken from "./useToken";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 export const AppContext = createContext({
   token: "",
@@ -51,7 +52,10 @@ function App() {
 
   return (
     <div>
-      <section className="hero has-background-success is-fullheight">
+      <section
+        className="hero has-background-success is-fullheight"
+        style={{ fontFamily: "Inter, sans-serif" }}
+      >
         <div className="hero-head has-background-success-light">
           <nav className="navbar ">
             <div className="navbar-brand ">

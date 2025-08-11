@@ -2,27 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AppContext } from "../App";
 
-const listTask = [
-  {
-    title: "Go to Ebisu",
-    description:
-      "Buy a One Piece figure, and then get a pack of One Piece 11, and then go to 98K",
-    due_date: new Date(),
-    priority: "Low",
-    tags: "Entertainment",
-    is_done: false,
-  },
-  {
-    title: "Read Manga",
-    description:
-      "Find a manga with good adventure journey, powerscaling and romance!",
-    due_date: new Date(),
-    priority: "High",
-    tags: "Entertainment",
-    is_done: false,
-  },
-];
-
 function AddTask({ onClose, onCreate }) {
   // Get token
   const { token } = useContext(AppContext);
@@ -150,7 +129,7 @@ function AddTask({ onClose, onCreate }) {
               <div className="control">
                 <input
                   className="input is-rounded"
-                  type="date"
+                  type="datetime-local"
                   name={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
                   id="dueDate"
@@ -241,8 +220,9 @@ function AddTask({ onClose, onCreate }) {
 }
 
 function Task() {
-  const [tasks, setTasks] = useState(listTask);
+  const [tasks, setTasks] = useState([]);
   const [showAddTask, setShowAddTask] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
 
   // Get token
   const { token } = useContext(AppContext);
@@ -270,6 +250,25 @@ function Task() {
     }
   };
 
+  const finishTask = async (id) => {
+    try {
+      const response = await fetch(`http://127.0.0.1:5000/api/tasks/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ is_done: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: Status ${response.status}`);
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const deleteTask = async (id) => {
     try {
       const response = await fetch(`http://127.0.0.1:5000/api/tasks/${id}`, {
@@ -290,6 +289,28 @@ function Task() {
     }
   };
 
+  const fetchHistory = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:5000/api/tasks/history", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error: Status ${response.status}`);
+      }
+
+      const data = await response.json();
+      setTasks(data);
+      return true;
+    } catch (err) {
+      console.log(err);
+      return false;
+    }
+  };
+
   // Fetch task list in the beginning
   useEffect(() => {
     fetchTasks();
@@ -297,22 +318,67 @@ function Task() {
 
   const handleTask = (taskId) => {
     setTasks(tasks.filter((task) => task.id !== taskId));
-    deleteTask(taskId);
+    finishTask(taskId);
   };
-  const handleAddTask = (task) => {
-    setTasks([...tasks, task]);
+  const handleAddTask = () => {
     fetchTasks();
+  };
+
+  const getHistory = () => {
+    fetchHistory();
+    setShowHistory(true);
+  };
+
+  const getBackToMainTask = () => {
+    fetchTasks();
+    setShowHistory(false);
   };
 
   return (
     <div>
       <div className="mb-4">
-        <button
-          className="button is-link is-medium is-responsive"
-          onClick={() => setShowAddTask(true)}
-        >
-          New Task
-        </button>
+        {!showHistory ? (
+          <>
+            <button
+              className="button is-rounded is-link is-normal is-responsive"
+              onClick={() => setShowAddTask(true)}
+            >
+              <span className="icon">
+                <i className="fas fa-plus"></i>
+              </span>
+              <span>New Task</span>
+            </button>
+            <div
+              className="is-flex is-justify-content-flex-end"
+              style={{
+                position: "fixed",
+                bottom: "1rem",
+                right: "1rem",
+                zIndex: "1000",
+              }}
+            >
+              <button
+                className="tag is-dark is-medium is-responsive ml-3"
+                onClick={() => getHistory()}
+              >
+                <span className="icon">
+                  <i className="fas fa-history"></i>
+                </span>
+                <span>History</span>
+              </button>
+            </div>
+          </>
+        ) : (
+          <button
+            className="button is-link is-normal is-responsive ml-3"
+            onClick={() => getBackToMainTask()}
+          >
+            <span className="icon">
+              <i className="fas fa-arrow-left"></i>
+            </span>
+            <span>Back</span>
+          </button>
+        )}
       </div>
       {showAddTask &&
         createPortal(
@@ -323,44 +389,89 @@ function Task() {
           document.body
         )}
 
-      <h1 className="title">Your Tasks</h1>
+      <h1 className="title">{!showHistory ? "Your Tasks" : "History"}</h1>
+      {tasks.length == 0 && (
+        <p className="is-size-5 has-text-light has-text-weight-semibold">
+          You're all caught up!
+        </p>
+      )}
       <div className="container">
         <ul className="grid is-col-min-12">
           {tasks.map((task) => {
             return (
               <div className="cell" key={task.title}>
                 <li
-                  className={`card ${
-                    task.priority === "High"
-                      ? "has-background-danger-60 has-text-danger-invert"
-                      : task.priority === "Medium"
-                      ? "has-background-warning-60 has-text-warning-invert"
-                      : "has-background-light has-text-success-invert"
-                  } m-2`}
+                  className={`card has-text-light m-2`}
+                  style={{
+                    position: "relative",
+                    backgroundColor: "#241d19",
+                  }}
                   key={task.title}
                 >
-                  <header className="card-header"></header>
                   <div className="card-content">
-                    <p className="is-size-4 has-text-weight-bold">
-                      {task.title}
-                    </p>
-                    <div className="is-size-6">{task.description}</div>
-                  </div>
-                  <div className="card-footer">
-                    <div className="card-footer-item">
-                      <time dateTime={task.due_date}>
-                        {new Date(task.due_date).toLocaleDateString()}
-                      </time>
+                    <div className="media">
+                      <div className="media-content">
+                        <p className="is-size-4 has-text-weight-bold">
+                          {task.title}
+                        </p>
+                        <p className="is-size-6">{task.description}</p>
+                      </div>
+                      <div className="media-right">
+                        <span
+                          className={`tag is-rounded is-medium ${
+                            task.priority === "High"
+                              ? "is-danger"
+                              : task.priority === "Medium"
+                              ? "is-warning"
+                              : "is-success"
+                          }`}
+                        >
+                          {task.priority}
+                        </span>
+                      </div>
                     </div>
-                    <div className="card-footer-item">
-                      <p className="has-text-weight-semibold">{task.tags}</p>
+
+                    <div className="content">
+                      <span className="icon-text has-text-grey-light is-size-6">
+                        <span className="icon">
+                          <i className="fas fa-clock"></i>
+                        </span>
+                        <span>
+                          {new Intl.DateTimeFormat("en-US").format(
+                            new Date(task.due_date + "Z")
+                          ) +
+                            " at " +
+                            new Intl.DateTimeFormat("en-US", {
+                              hour: "numeric",
+                              minute: "numeric",
+                              second: "numeric",
+                            }).format(new Date(task.due_date + "Z"))}
+                        </span>
+                      </span>
                     </div>
-                    <div className="card-footer-item">
+
+                    <span className="tag is-info">{task.tags}</span>
+
+                    <div className="is-flex is-justify-content-flex-end mt-4">
                       <button
-                        className="button is-info"
+                        className="button is-rounded is-success"
                         onClick={() => handleTask(task.id)}
+                        style={{
+                          position: "absolute",
+                          bottom: "1rem",
+                          right: "1rem",
+                        }}
+                        title={
+                          showHistory
+                            ? "Task Completed"
+                            : "Mark task as complete"
+                        }
+                        disabled={showHistory}
                       >
-                        Done
+                        <span className="icon">
+                          <i className="fas fa-circle-check"></i>
+                        </span>
+                        <span>Complete</span>
                       </button>
                     </div>
                   </div>

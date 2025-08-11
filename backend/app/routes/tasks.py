@@ -14,7 +14,7 @@ task = Blueprint("task", __name__, url_prefix="/api/tasks")
 @jwt_required()
 def get_tasks():
     user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    tasks = Task.query.filter_by(user_id=user_id, is_done=False).all()
 
     return jsonify([{
         'id': t.id,
@@ -24,7 +24,7 @@ def get_tasks():
         'priority': t.priority,
         'tags': t.tags,
         'is_done': t.is_done
-    } for t in user.tasks])
+    } for t in tasks])
     
 
 @task.route('/', methods=['POST'])
@@ -81,3 +81,19 @@ def delete_task(task_id):
     db.session.delete(task)
     db.session.commit()
     return jsonify({'msg': 'Task deleted'})
+
+@task.route('/history', methods=["GET"])
+@jwt_required()
+def get_history():
+    user_id = get_jwt_identity()
+    tasks = Task.query.filter_by(user_id=user_id, is_done=True).order_by(Task.due_date.desc()).all()
+
+    return jsonify([{
+        'id': t.id,
+        'title': t.title,
+        'description': t.description,
+        'due_date': t.due_date.isoformat(),
+        'priority': t.priority,
+        'tags': t.tags,
+        'is_done': t.is_done
+    } for t in tasks])
