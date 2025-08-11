@@ -1,12 +1,15 @@
 import { Link } from "react-router-dom";
 import { Outlet } from "react-router-dom";
 import logo from "./assets/logo.jpg";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import useToken from "./useToken";
 
 export const AppContext = createContext({
   token: "",
   setToken: () => {},
+  playSound: () => {},
+  pauseSound: () => {},
+  stopSound: () => {},
 });
 
 function App() {
@@ -15,6 +18,36 @@ function App() {
 
   // isActive for Nav-burger
   const [isActive, setIsActive] = useState(false);
+
+  // Sound managing
+  const audioRef = useRef(null);
+
+  useEffect(() => {
+    audioRef.current = new Audio("/rain.mp3");
+    audioRef.current.loop = true;
+    audioRef.current.volume = 1;
+  }, []);
+
+  const playSound = () => {
+    if (audioRef.current) {
+      audioRef.current
+        .play()
+        .catch((err) => console.log("Audio play error:", err));
+    }
+  };
+
+  const pauseSound = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+  };
+
+  const stopSound = () => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  };
 
   return (
     <div>
@@ -63,6 +96,12 @@ function App() {
                       >
                         <strong>Tasks</strong>
                       </Link>
+                      <Link
+                        to="pomodoro"
+                        className="navbar-item has-text-success-25"
+                      >
+                        <strong>Focus Mode</strong>
+                      </Link>
                     </>
                   ) : null}
                 </div>
@@ -105,7 +144,9 @@ function App() {
 
         <div className="hero-body">
           <div className="container">
-            <AppContext.Provider value={{ token, setToken }}>
+            <AppContext.Provider
+              value={{ token, setToken, playSound, pauseSound, stopSound }}
+            >
               <Outlet />
             </AppContext.Provider>
           </div>

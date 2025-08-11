@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard.jsx";
 import Login from "./pages/Login.jsx";
 import Signup from "./pages/Signup.jsx";
 import Task from "./pages/Tasks.jsx";
+import Pomodoro from "./pages/Pomodoro.jsx";
 import ProtectedRoutes from "./pages/ProtectedRoutes.jsx";
 
 const routes = [
@@ -21,6 +22,7 @@ const routes = [
         children: [
           { path: "dashboard", element: <Dashboard /> },
           { path: "tasks", element: <Task /> },
+          { path: "pomodoro", element: <Pomodoro /> },
         ],
       },
     ],
