@@ -13,6 +13,7 @@ class PomodoroSession( db.Model ):
     end_time: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
     last_pause: Mapped[DateTime] = mapped_column(DateTime, nullable=True)
     duration: Mapped[int] = mapped_column(Integer) # in minutes
+    elapsed: Mapped[int] = mapped_column(Integer) # in seconds
     pause_time: Mapped[int] = mapped_column(Integer) # in seconds
     session_type: Mapped[str] = mapped_column(String(20)) # "focus" or "break"
     status: Mapped[str] = mapped_column(String(20), default="active") # "active" or "completed"

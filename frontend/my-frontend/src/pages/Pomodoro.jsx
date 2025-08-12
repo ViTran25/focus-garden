@@ -13,13 +13,14 @@ function Pomodoro() {
   const [sessionId, setSessionId] = useState(null);
   const [isActive, setIsActive] = useState(false);
   const [isPaused, setIsPaused] = useState(null);
-  const [scale, setScale] = useState(1);
   const [dailyTime, setDailyTime] = useState(0);
   const [sessionType, setSessionType] = useState("focus"); // "focus" or "break"
+  const [totalTime, setTotalTime] = useState(1500);
+  const [soundPlaying, setSoundPlaying] = useState(false);
   let elapsed = 0;
   const durations = {
-    focus: 10, // 25 minutes
-    break: 5, // 5 minutes
+    focus: totalTime,
+    break: totalTime / 5, // 5 minutes
   };
 
   // Fetching Functions----------------------------
@@ -37,7 +38,6 @@ function Pomodoro() {
       }
 
       const data = await response.json();
-      console.log(data);
       return data;
     } catch (err) {
       console.log(err);
@@ -58,7 +58,6 @@ function Pomodoro() {
       }
 
       const data = await response.json();
-      console.log(data.total);
       setDailyTime((prev) => prev + data.total);
     } catch (err) {
       console.log(err);
@@ -166,12 +165,11 @@ function Pomodoro() {
           setIsActive(false);
 
           // Notify backend that session ended
-          endFetch(sessionId, durations[sessionType]).then(() => {
+          endFetch(sessionId).then(() => {
             // Auto-start break if focus ended
             const nextType = sessionType === "focus" ? "break" : "focus";
             setSessionType(nextType);
           });
-          setScale(1);
           stopSound();
 
           return 0;
@@ -201,8 +199,10 @@ function Pomodoro() {
       setTime(duration); // 25 minutes session
       startCountdown(data.session_id);
       setIsActive(true);
-      setScale(1.3);
-      if (sessionType === "focus") playSound();
+      if (sessionType === "focus") {
+        playSound();
+        setSoundPlaying(true);
+      }
     } catch (err) {
       console.log("Failed to start session:", err);
     }
@@ -222,7 +222,7 @@ function Pomodoro() {
     pauseOrResumeFetch(id, "resume", timeBetween);
     startCountdown(sessionId);
     setIsPaused(false);
-    if (sessionType === "focus") playSound();
+    if (sessionType === "focus" && soundPlaying) playSound();
   };
 
   const stopSession = (id) => {
@@ -232,7 +232,6 @@ function Pomodoro() {
     setTime(0);
     setIsPaused(false);
     setIsActive(false);
-    setScale(1);
     stopSound();
     startRef.current = false;
     setSessionType("focus");
@@ -249,11 +248,11 @@ function Pomodoro() {
       if (!session?.session_id || intervalId) return;
 
       setSessionId(session.session_id);
-      const duration = durations[session.session_type] || "focus";
+      setTotalTime(session.duration);
+      const duration = session.duration;
       setSessionType(session.session_type || "focus");
       setTime(duration - session.time);
       setIsActive(true);
-      setScale(1.3);
 
       if (session.last_pause) {
         const lastPauseTime = new Date(session.last_pause).getTime();
@@ -262,6 +261,10 @@ function Pomodoro() {
 
       if (session.status === "active") {
         startCountdown(session.session_id);
+        if (sessionType === "focus") {
+          playSound();
+          setSoundPlaying(true);
+        }
       }
 
       setIsPaused(session.status !== "active");
@@ -297,13 +300,71 @@ function Pomodoro() {
           fontFamily: "Inter, sans-serif",
         }}
       >
-        {isActive && (
-          <button
-            className="button is-small is-light is-danger"
-            onClick={() => stopSession(sessionId)}
+        {!isActive && (
+          <div
+            className="control has-icons-left"
+            style={{ position: "absolute", left: "0", top: "0" }}
           >
-            Stop
-          </button>
+            <div className="select is-success is-normal is-rounded">
+              <select
+                value={totalTime}
+                onChange={(e) => setTotalTime(e.target.value)}
+              >
+                <option value={25 * 60}>25</option>
+                <option value={50 * 60}>50</option>
+              </select>
+            </div>
+            <div className="icon is-small is-left">
+              <i className="fas fa-hourglass-end"></i>
+            </div>
+          </div>
+        )}
+
+        {isActive && (
+          <>
+            <div style={{ position: "absolute", left: "0", top: "0" }}>
+              {soundPlaying ? (
+                <button
+                  className="button is-small is-dark is-rounded"
+                  onClick={() => {
+                    pauseSound();
+                    setSoundPlaying(false);
+                  }}
+                  style={{ top: "0.3rem" }}
+                  aria-label="stop-sound"
+                >
+                  <span className="icon">
+                    <i className="fas fa-volume-high"></i>
+                  </span>
+                </button>
+              ) : (
+                <button
+                  className="button is-small is-dark is-rounded"
+                  onClick={() => {
+                    playSound();
+                    setSoundPlaying(true);
+                  }}
+                  style={{ top: "0.3rem" }}
+                  aria-label="stop-sound"
+                >
+                  <span className="icon">
+                    <i className="fas fa-volume-xmark"></i>
+                  </span>
+                </button>
+              )}
+            </div>
+
+            <button
+              className="button is-small is-dark is-rounded"
+              onClick={() => stopSession(sessionId)}
+              style={{ top: "0.3rem" }}
+              aria-label="Stop"
+            >
+              <span className="icon">
+                <i className="fas fa-stop"></i>
+              </span>
+            </button>
+          </>
         )}
         <p
           className="is-size-4 has-text-light has-text-right has-text-weight-semibold"
@@ -320,40 +381,68 @@ function Pomodoro() {
       is-align-items-center is-justify-content-center"
         style={{ position: "relative" }}
       >
-        <p
-          className="is-size-5 has-text-light has-text-weight-semibold"
-          style={{ position: "absolute", top: 100 }}
-        >
-          {sessionType === "focus" ? "Focus" : "Break"}
-        </p>
+        {isActive && (
+          <p
+            className="is-size-5 has-text-light has-text-weight-semibold"
+            style={{ position: "absolute", top: 100 }}
+          >
+            {sessionType === "focus" ? "Focus" : "Break"}
+          </p>
+        )}
         {/* Progress Bar */}
-        <div
-          className="containter has-text-centered mb-6"
-          style={{
-            width: 300,
-            height: 300,
-            transform: `scale(${scale})`,
-            transition: "transform 0.5s ease-in-out",
-            fontFamily: "Inter, sans-serif",
-          }}
-        >
-          <CircularProgressbar
-            value={progress}
-            text={`${minutes < 10 ? "0" + minutes : minutes} :
+        {isActive ? (
+          <div
+            className="containter has-text-centered mb-6"
+            style={{
+              width: 300,
+              height: 300,
+              transform: "scale(1.3)",
+              fontFamily: "Inter, sans-serif",
+            }}
+          >
+            <CircularProgressbar
+              value={progress}
+              text={`${minutes < 10 ? "0" + minutes : minutes} :
             ${seconds < 10 ? "0" + seconds : seconds}`}
-            strokeWidth={3}
-            styles={buildStyles({
-              textSize: "25px",
-              textColor: "#e4fae4ff",
-              pathColor: "#eaf5eeff",
-              trailColor: "rgba(255, 255, 255, 0.3)",
-              rotation: 0.625,
-              pathTransitionDuration: 0.5,
-              backgroundColor: "transparent",
-            })}
-            circleRatio={0.75}
-          />
-        </div>
+              strokeWidth={3}
+              styles={buildStyles({
+                textSize: "25px",
+                textColor: "#e4fae4ff",
+                pathColor: "#eaf5eeff",
+                trailColor: "rgba(255, 255, 255, 0.3)",
+                rotation: 0.625,
+                pathTransitionDuration: 0.5,
+                backgroundColor: "transparent",
+              })}
+              circleRatio={0.75}
+            />
+          </div>
+        ) : (
+          <div
+            className="has-text-centered is-flex is-align-items-center is-justify-content-center"
+            style={{ width: "100%", height: 300 }}
+          >
+            {dailyTime === 0 ? (
+              <p className="is-size-3 has-text-light has-text-weight-semibold">
+                "The journey of a thousand miles begins with a single step."
+              </p>
+            ) : dailyTime <= 30 ? (
+              <p className="is-size-3 has-text-light has-text-weight-semibold">
+                Nice start! You've focused {dailyTime} minutes today.
+              </p>
+            ) : dailyTime <= 60 ? (
+              <p className="is-size-3 has-text-light has-text-weight-semibold">
+                You're making great progress! You've focused {dailyTime} minutes
+                today.
+              </p>
+            ) : (
+              <p className="is-size-3 has-text-light has-text-weight-semibold">
+                That's a deep dive into focus. You've focused {dailyTime}{" "}
+                minutes today. You're thriving!
+              </p>
+            )}
+          </div>
+        )}
 
         {/* Buttons below the timer */}
         <div
@@ -369,23 +458,35 @@ function Pomodoro() {
           }}
         >
           {isActive ? null : (
-            <button className="button is-info is-medium" onClick={startSession}>
+            <button
+              className="button is-info is-medium is-rounded is-outlined"
+              onClick={startSession}
+              style={{ backgroundColor: "#19241cff" }}
+            >
               Focus
             </button>
           )}
           {!isActive ? null : isPaused ? (
             <button
-              className="button has-background-success-45"
+              className="button is-medium is-success is-rounded is-outlined"
               onClick={() => resumeSession(sessionId)}
+              style={{ backgroundColor: "#19241cff" }}
+              aria-label="resume"
             >
-              Resume
+              <span className="icon">
+                <i className="fas fa-play"></i>
+              </span>
             </button>
           ) : (
             <button
-              className="button is-warning"
+              className="button is-medium is-warning is-rounded is-outlined"
               onClick={() => pauseSession(sessionId)}
+              style={{ backgroundColor: "#19241cff" }}
+              aria-label="pause"
             >
-              Pause
+              <span className="icon">
+                <i className="fas fa-pause"></i>
+              </span>
             </button>
           )}
         </div>

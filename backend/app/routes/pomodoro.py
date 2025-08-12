@@ -28,11 +28,12 @@ def get_active_session():
     if session.status == "active":
         elapsed = elapsed.seconds - session.pause_time
     else:
-        elapsed = session.duration
+        elapsed = session.elapsed
     
     return jsonify({
         "session_id": session.id, 
         "session_type": session.session_type,
+        "duration": session.duration,
         "time": elapsed, 
         "status": session.status,
         "last_pause": session.last_pause.isoformat() + "Z" if session.last_pause else None
@@ -53,6 +54,7 @@ def start_session():
         start_time = datetime.now(),
         session_type = request.json.get("session_type", "focus"),
         duration = request.json.get("duration", 0),
+        elapsed = 0,
         pause_time = 0,
         status="active"
     )
@@ -76,8 +78,6 @@ def end_session(session_id):
 
     session.end_time = datetime.now()
     session.status = "completed"
-    # session.duration will have 'minute' unit once session ended
-    session.duration = request.json.get("duration")
 
     db.session.commit()
 
@@ -101,11 +101,11 @@ def pause_session(session_id):
     session.status = "paused"
     # Store elapsed time as seconds into session.duration
     elapsed = request.json.get('time')
-    session.duration = elapsed
+    session.elapsed = elapsed
     session.last_pause = datetime.now(timezone.utc)
     db.session.commit()
 
-    return jsonify({"message": "Pomodoro paused", "duration": session.duration}), 200
+    return jsonify({"message": "Pomodoro paused", "duration": session.elapsed}), 200
 
 
 @pomodoro.route('/resume/<int:session_id>', methods=['POST'])
