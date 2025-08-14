@@ -46,10 +46,23 @@ function Signup() {
 
   return (
     <div>
-      <h1 className="title">Sign Up</h1>
-      <form action="" onSubmit={handleSubmit}>
+      <h1
+        className="title has-text-light"
+        style={{ textShadow: "0px 0px 10px #19241cff" }}
+      >
+        Sign Up
+      </h1>
+      <form
+        action=""
+        onSubmit={handleSubmit}
+        style={{
+          backdropFilter: "brightness(60%)",
+          padding: "20px",
+          borderRadius: "10px",
+        }}
+      >
         <div className="field has-text-left">
-          <label className="label" htmlFor="username">
+          <label className="label has-text-light" htmlFor="username">
             Username
           </label>
           <div className="control">
@@ -67,7 +80,7 @@ function Signup() {
         </div>
 
         <div className="field has-text-left">
-          <label className="label" htmlFor="email">
+          <label className="label has-text-light" htmlFor="email">
             Email
           </label>
           <div className="control">
@@ -85,7 +98,7 @@ function Signup() {
         </div>
 
         <div className="field has-text-left">
-          <label className="label" htmlFor="password">
+          <label className="label has-text-light" htmlFor="password">
             Password
           </label>
           <div className="control">

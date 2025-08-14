@@ -74,7 +74,7 @@ function Pomodoro() {
         },
         body: JSON.stringify({
           session_type: type,
-          duration: duration,
+          duration: duration / 60,
         }),
       });
 
@@ -92,17 +92,15 @@ function Pomodoro() {
     }
   };
 
-  const endFetch = async (id, duration) => {
+  const endFetch = async (id) => {
     try {
       const response = await fetch(
         `http://127.0.0.1:5000/api/pomodoro/end/${id}`,
         {
           method: "POST",
           headers: {
-            "Content-type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ duration: duration }),
         }
       );
 
@@ -248,8 +246,8 @@ function Pomodoro() {
       if (!session?.session_id || intervalId) return;
 
       setSessionId(session.session_id);
-      setTotalTime(session.duration);
-      const duration = session.duration;
+      setTotalTime(session.duration * 60);
+      const duration = session.duration * 60;
       setSessionType(session.session_type || "focus");
       setTime(duration - session.time);
       setIsActive(true);
@@ -368,7 +366,12 @@ function Pomodoro() {
         )}
         <p
           className="is-size-4 has-text-light has-text-right has-text-weight-semibold"
-          style={{ position: "absolute", right: 0, top: 0 }}
+          style={{
+            position: "absolute",
+            right: 0,
+            top: 0,
+            textShadow: "0px 0px 10px #19241cff",
+          }}
         >
           {dailyTime}m
         </p>
@@ -379,7 +382,7 @@ function Pomodoro() {
         className="section is-flex 
       is-flex-direction-column 
       is-align-items-center is-justify-content-center"
-        style={{ position: "relative" }}
+        style={{ position: "relative", textShadow: "0px 0px 10px #19241cff" }}
       >
         {isActive && (
           <p
@@ -396,7 +399,7 @@ function Pomodoro() {
             style={{
               width: 300,
               height: 300,
-              transform: "scale(1.3)",
+              transform: "scale(1.4)",
               fontFamily: "Inter, sans-serif",
             }}
           >
@@ -420,7 +423,11 @@ function Pomodoro() {
         ) : (
           <div
             className="has-text-centered is-flex is-align-items-center is-justify-content-center"
-            style={{ width: "100%", height: 300 }}
+            style={{
+              width: "100%",
+              height: 300,
+              textShadow: "0px 0px 10px #19241cff",
+            }}
           >
             {dailyTime === 0 ? (
               <p className="is-size-3 has-text-light has-text-weight-semibold">
@@ -449,7 +456,7 @@ function Pomodoro() {
           className="buttons"
           style={{
             position: "absolute",
-            bottom: "90px",
+            bottom: "4.2rem",
             left: "50%",
             transform: "translateX(-50%)",
             display: "flex",

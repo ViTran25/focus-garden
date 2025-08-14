@@ -58,11 +58,24 @@ function Login() {
 
   return (
     <div>
-      <h1 className="title">Login</h1>
+      <h1
+        className="title has-text-light"
+        style={{ textShadow: "0px 0px 10px #19241cff" }}
+      >
+        Login
+      </h1>
       {error && <div className="notification is-danger">{error}</div>}
-      <form action="" onSubmit={handleSubmit}>
+      <form
+        action=""
+        onSubmit={handleSubmit}
+        style={{
+          backdropFilter: "brightness(60%)",
+          padding: "20px",
+          borderRadius: "10px",
+        }}
+      >
         <div className="field has-text-left">
-          <label className="label" htmlFor="username">
+          <label className="label has-text-light" htmlFor="username">
             Username
           </label>
           <div className="control">
@@ -80,7 +93,7 @@ function Login() {
         </div>
 
         <div className="field has-text-left">
-          <label className="label" htmlFor="password">
+          <label className="label has-text-light" htmlFor="password">
             Password
           </label>
           <div className="control">
@@ -97,7 +110,7 @@ function Login() {
         </div>
 
         <div className="field has-text-left">
-          <label className="label checkbox" htmlFor="remember">
+          <label className="label checkbox has-text-light" htmlFor="remember">
             <input
               type="checkbox"
               name="remember"

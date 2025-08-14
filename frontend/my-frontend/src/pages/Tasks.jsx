@@ -389,7 +389,12 @@ function Task() {
           document.body
         )}
 
-      <h1 className="title">{!showHistory ? "Your Tasks" : "History"}</h1>
+      <h1
+        className="title has-text-light"
+        style={{ textShadow: "0px 0px 10px #19241cff" }}
+      >
+        {!showHistory ? "Your Tasks" : "History"}
+      </h1>
       {tasks.length == 0 && (
         <p className="is-size-5 has-text-light has-text-weight-semibold">
           You're all caught up!
