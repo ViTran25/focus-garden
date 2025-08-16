@@ -164,7 +164,8 @@ def get_daily_minutes():
     sessions = (PomodoroSession.query
                 .filter(
                     func.date(PomodoroSession.start_time) == today,
-                    PomodoroSession.status == "completed"
+                    PomodoroSession.status == "completed",
+                    PomodoroSession.user_id == user_id
                 )
                 .all())
 
@@ -173,4 +174,6 @@ def get_daily_minutes():
     for s in sessions:
         total_minutes += s.duration
 
-    return jsonify({ "total": total_minutes }), 200
+    total_sessions = len(sessions)
+
+    return jsonify({ "total": total_minutes, "sessions": total_sessions }), 200

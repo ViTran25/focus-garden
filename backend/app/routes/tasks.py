@@ -2,7 +2,8 @@ import sys
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
-from datetime import datetime
+from datetime import datetime, date, timedelta
+from sqlalchemy import func
 
 from ..models import db
 from ..models.user import User
@@ -87,6 +88,56 @@ def delete_task(task_id):
 def get_history():
     user_id = get_jwt_identity()
     tasks = Task.query.filter_by(user_id=user_id, is_done=True).order_by(Task.due_date.desc()).all()
+
+    return jsonify([{
+        'id': t.id,
+        'title': t.title,
+        'description': t.description,
+        'due_date': t.due_date.isoformat(),
+        'priority': t.priority,
+        'tags': t.tags,
+        'is_done': t.is_done
+    } for t in tasks])
+
+
+@task.route('/today', methods=['GET'])
+@jwt_required()
+def get_tasks_today():
+    user_id = get_jwt_identity()
+
+    today = date.today()
+    tasks = Task.query.filter(
+        func.date(Task.due_date) == today,
+        Task.user_id == user_id
+    ).all()
+
+    return jsonify([{
+        'id': t.id,
+        'title': t.title,
+        'description': t.description,
+        'due_date': t.due_date.isoformat(),
+        'priority': t.priority,
+        'tags': t.tags,
+        'is_done': t.is_done
+    } for t in tasks])
+
+
+@task.route('/future', methods=['GET'])
+@jwt_required()
+def get_tasks_future():
+    user_id = get_jwt_identity()
+
+    today = date.today()
+    N = 7
+    start = date.today() + timedelta(days=1)
+    end = start + timedelta(days=N)
+
+    tasks = Task.query.filter(
+        Task.user_id == user_id,
+        func.date(Task.due_date) >= start,
+        func.date(Task.due_date) < end,
+        Task.is_done == False,
+    ).order_by(Task.due_date.asc()).all()
 
     return jsonify([{
         'id': t.id,

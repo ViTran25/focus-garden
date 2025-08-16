@@ -269,26 +269,6 @@ function Task() {
     }
   };
 
-  const deleteTask = async (id) => {
-    try {
-      const response = await fetch(`http://127.0.0.1:5000/api/tasks/${id}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error: Status ${response.status}`);
-      }
-
-      return true;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
-  };
-
   const fetchHistory = async () => {
     try {
       const response = await fetch("http://127.0.0.1:5000/api/tasks/history", {
@@ -396,8 +376,11 @@ function Task() {
         {!showHistory ? "Your Tasks" : "History"}
       </h1>
       {tasks.length == 0 && (
-        <p className="is-size-5 has-text-light has-text-weight-semibold">
-          You're all caught up!
+        <p
+          className="is-size-5 has-text-light has-text-weight-semibold"
+          style={{ textShadow: "0px 0px 10px #19241cff" }}
+        >
+          You're all caught up! 🎉
         </p>
       )}
       <div className="container">
@@ -409,7 +392,8 @@ function Task() {
                   className={`card has-text-light m-2`}
                   style={{
                     position: "relative",
-                    backgroundColor: "#241d19",
+                    backgroundColor: "rgba(15,23,20,0.55)",
+                    backdropFilter: "blur(10px)",
                   }}
                   key={task.title}
                 >

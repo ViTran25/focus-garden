@@ -410,8 +410,8 @@ function Pomodoro() {
               strokeWidth={3}
               styles={buildStyles({
                 textSize: "25px",
-                textColor: "#e4fae4ff",
-                pathColor: "#eaf5eeff",
+                textColor: "#ffffff",
+                pathColor: "#ffffff",
                 trailColor: "rgba(255, 255, 255, 0.3)",
                 rotation: 0.625,
                 pathTransitionDuration: 0.5,

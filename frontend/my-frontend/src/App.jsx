@@ -74,10 +74,7 @@ function App() {
       >
         <div className="hero-head">
           <nav className="navbar">
-            <div
-              className="navbar-brand "
-              style={{ textShadow: "0px 0px 10px #19241cff" }}
-            >
+            <div className="navbar-brand ">
               <Link to="">
                 <figure className="image is-64x64 m-2">
                   <img src={logo} className="is-rounded" alt="Logo" />
@@ -105,6 +102,7 @@ function App() {
               <div
                 className={`navbar-menu ${isActive ? "is-active" : ""}`}
                 id="navMenu"
+                style={{ textShadow: "0px 0px 5px #323634ff" }}
               >
                 <div className="navbar-start">
                   {token ? (
