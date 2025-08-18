@@ -39,13 +39,10 @@ function AddTask({ onClose, onCreate }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log({ title, description, dueDate, priority, tags });
-    const formattedDueDate = dueDate
-      ? new Date(dueDate).toISOString()
-      : new Date().toISOString();
     const addResult = await sendTask({
       title,
       description,
-      due_date: formattedDueDate,
+      due_date: dueDate,
       priority,
       tags,
       is_done: false,
@@ -422,20 +419,21 @@ function Task() {
 
                     <div className="content">
                       <span className="icon-text has-text-grey-light is-size-6">
+                        <span>
+                          {new Intl.DateTimeFormat("en-US").format(
+                            new Date(task.due_date)
+                          )}
+                        </span>
+                      </span>
+
+                      <span className="is-pulled-right has-text-grey-light">
                         <span className="icon">
                           <i className="fas fa-clock"></i>
                         </span>
-                        <span>
-                          {new Intl.DateTimeFormat("en-US").format(
-                            new Date(task.due_date + "Z")
-                          ) +
-                            " at " +
-                            new Intl.DateTimeFormat("en-US", {
-                              hour: "numeric",
-                              minute: "numeric",
-                              second: "numeric",
-                            }).format(new Date(task.due_date + "Z"))}
-                        </span>
+                        {new Intl.DateTimeFormat("en-US", {
+                          hour: "numeric",
+                          minute: "numeric",
+                        }).format(new Date(task.due_date))}
                       </span>
                     </div>
 
@@ -460,7 +458,7 @@ function Task() {
                         <span className="icon">
                           <i className="fas fa-circle-check"></i>
                         </span>
-                        <span>Complete</span>
+                        <span>Done</span>
                       </button>
                     </div>
                   </div>

@@ -15,7 +15,7 @@ task = Blueprint("task", __name__, url_prefix="/api/tasks")
 @jwt_required()
 def get_tasks():
     user_id = get_jwt_identity()
-    tasks = Task.query.filter_by(user_id=user_id, is_done=False).all()
+    tasks = Task.query.filter_by(user_id=user_id, is_done=False).order_by(Task.due_date.asc()).all()
 
     return jsonify([{
         'id': t.id,
@@ -35,7 +35,7 @@ def create_task():
     data = request.get_json()
     print("Received data:", data, file=sys.stderr)
     try:
-        due_date = datetime.strptime(data.get('due_date'), "%Y-%m-%dT%H:%M:%S.%fZ") if data.get('due_date') else datetime.now()
+        due_date = datetime.strptime(data.get('due_date'), "%Y-%m-%dT%H:%M") if data.get('due_date') else datetime.now()
     except Exception as e:
         return jsonify({'error': 'Invalid due_date format'}), 400
 
