@@ -6,70 +6,74 @@ gentle breeze.
 
 **Plan your day. Track focus. Immerse in calming nature.**
 
-## Core Features
+## User Dashboard
 
-- **User Dashboard** – **Your Daily Overview.**
+**Your Daily Overview.**
 
-  Track your daily focused minutes, focus streak and completed
-  tasks.
+Track your daily focused minutes, focus streak and completed
+tasks.
 
-  Dive into today's priorities, plan upcoming tasks.
+Dive into today's priorities, plan upcoming tasks.
 
-  A new motivation quote every day to inspire your action and positive
-  thinking.
+A new motivation quote every day to inspire your action and positive
+thinking.
 
-  <img
+<img
       src="/demo_images/demo_dashboard.jpg"
       alt="User Dashboard Demo"
-      width="300"
+      width="600"
     />
 
-- **Task Manager**
+## Task Manager
 
-  A clean, minimalist task list, cuts mental clutter and keeps your
-  focus flowing.
+A clean, minimalist task list, cuts mental clutter and keeps your
+focus flowing.
 
-  Tracking tasks with priority tags, due dates, and
-  categories.
+Tracking tasks with priority tags, due dates, and
+categories.
 
-  <img
+<img
         src="/demo_images/demo_tasks.jpg"
         alt="Task Manager Demo"
-        width="300"
+        width="600"
     />
 
-- **Focus Mode** – Focus with a minimalist circular Pomodoro timer.
+## Focus Mode
 
-  Use the Pomodoro technique to stay on track and improve focus.
+**Focus with a minimalist circular Pomodoro timer.**
 
-  Alternate between focused work and short breaks to maintain energy
-  and recharge motivation.
+Use the Pomodoro technique to stay on track and improve focus.
 
-  <img
+Alternate between focused work and short breaks to maintain energy
+and recharge motivation.
+
+<img
     src="/demo_images/demo_pomo_1.jpg"
     alt="Pomodoro Timer Demo"
-    width="300"
+    width="600"
   />
 
-  <img
+<img
     src="/demo_images/demo_pomo_2.jpg"
     alt="Pomodoro Timer Demo"
-    width="300"
+    width="600"
   />
 
-- **Nature Background** - Daily Scenery Images
+## Nature Background
 
-  From majestic mountain tops, to lush green forests, to vast fields,
-  and to blue beaches, Focus Garden offerss a rotating gallery of nature
-  images to calm your mind and enhance your focus.
+**Daily Scenery Images**
 
-  Nature imagery creates a peaceful workspace that supports deep
-  concentration and emotional balance.
+From majestic mountain tops, to lush green forests, to vast fields,
+and to blue beaches, Focus Garden offerss a rotating gallery of nature
+images to calm your mind and enhance your focus.
 
-  <img
-    src="/demo_images/background_collage.jpg"
+Nature imagery creates a peaceful workspace that supports deep
+concentration and emotional balance.
+
+<img
+    src="/demo_images/background_collage.png"
     alt="Background Images"
-    width="300"
+    width="600"
   />
 
 ## Theme
