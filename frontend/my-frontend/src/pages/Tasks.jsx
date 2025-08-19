@@ -312,7 +312,7 @@ function Task() {
   };
 
   return (
-    <div>
+    <div className="container">
       <div className="mb-4">
         {!showHistory ? (
           <>

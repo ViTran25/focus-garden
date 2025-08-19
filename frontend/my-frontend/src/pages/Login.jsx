@@ -57,7 +57,7 @@ function Login() {
   }
 
   return (
-    <div>
+    <div className="container">
       <h1
         className="title has-text-light"
         style={{ textShadow: "0px 0px 10px #19241cff" }}

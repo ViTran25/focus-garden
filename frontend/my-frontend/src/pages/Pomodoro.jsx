@@ -288,7 +288,7 @@ function Pomodoro() {
     ((durations[sessionType] - time) / durations[sessionType]) * 100;
 
   return (
-    <div>
+    <div className="container">
       {/* Stop Button at Top */}
       <div
         className="has-text-centered mb-6"

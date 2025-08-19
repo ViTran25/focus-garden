@@ -140,7 +140,7 @@ function Dashboard() {
   const transition = "opacity 0.2s ease, transform 0.2s ease";
 
   return (
-    <>
+    <div className="container">
       <div
         className="has-text-centered mb-5"
         style={{ textShadow: "0px 0px 10px #19241cff" }}
@@ -280,7 +280,7 @@ function Dashboard() {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

@@ -31,7 +31,14 @@ const imageList = [
     picLink:
       "https://unsplash.com/photos/green-trees-on-mountain-during-daytime-k4yqev37nNY",
   },
-
+  {
+    src: "/bird1-roberto-zuniga.jpg",
+    credit: "Roberto Zuniga",
+    from: "Unsplash",
+    link: "https://unsplash.com/@errezuniga",
+    picLink:
+      "https://unsplash.com/photos/green-bird-on-brown-tree-branch-during-daytime-jr8V04y_LTw",
+  },
   {
     src: "/bird2-evan-porter.jpg",
     credit: "Evan Porter",
@@ -55,14 +62,6 @@ const imageList = [
     link: "https://unsplash.com/@fallonmichaeltx",
     picLink:
       "https://unsplash.com/photos/a-beach-with-palm-trees-and-the-ocean-in-the-background-Ox_6M68VqfQ",
-  },
-  {
-    src: "/bird1-roberto-zuniga.jpg",
-    credit: "Roberto Zuniga",
-    from: "Unsplash",
-    link: "https://unsplash.com/@errezuniga",
-    picLink:
-      "https://unsplash.com/photos/green-bird-on-brown-tree-branch-during-daytime-jr8V04y_LTw",
   },
 ];
 

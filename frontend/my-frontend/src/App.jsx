@@ -66,6 +66,7 @@ function App() {
         backgroundImage: `url(${dailyImage.src})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
     >
       <section
@@ -173,13 +174,11 @@ function App() {
 
         {/*Main page section*/}
         <div className="hero-body">
-          <div className="container">
-            <AppContext.Provider
-              value={{ token, setToken, playSound, pauseSound, stopSound }}
-            >
-              <Outlet />
-            </AppContext.Provider>
-          </div>
+          <AppContext.Provider
+            value={{ token, setToken, playSound, pauseSound, stopSound }}
+          >
+            <Outlet />
+          </AppContext.Provider>
         </div>
 
         {/*Background Image Credit section*/}
