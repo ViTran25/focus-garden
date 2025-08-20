@@ -4,7 +4,7 @@ import { AppContext } from "../App";
 import quoteList from "../quotes";
 
 function Dashboard() {
-  const { token } = useContext(AppContext);
+  const { token, API_URL } = useContext(AppContext);
 
   const [tasks, setTasks] = useState([]);
   const [futureTasks, setFutureTasks] = useState([]);
@@ -15,7 +15,7 @@ function Dashboard() {
 
   const fetchTodayTasks = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/tasks/today", {
+      const response = await fetch(`${API_URL}/api/tasks/today`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ function Dashboard() {
 
   const fetchFutureTasks = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/tasks/future", {
+      const response = await fetch(`${API_URL}/api/tasks/future`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -64,7 +64,7 @@ function Dashboard() {
 
   const getSessionDailyStats = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/pomodoro/daily", {
+      const response = await fetch(`${API_URL}/api/pomodoro/daily`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

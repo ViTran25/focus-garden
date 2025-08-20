@@ -3,9 +3,9 @@ import { AppContext } from "../App";
 import PropTypes from "prop-types";
 import { Navigate } from "react-router-dom";
 
-async function loginUser(credentials) {
+async function loginUser(credentials, url) {
   try {
-    const response = await fetch("http://127.0.0.1:5000/login", {
+    const response = await fetch(`${url}/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -26,7 +26,7 @@ async function loginUser(credentials) {
 
 function Login() {
   // Get props from the App
-  const { token, setToken } = useContext(AppContext);
+  const { token, setToken, API_URL } = useContext(AppContext);
 
   // States for login information
   const [username, setUsername] = useState("");
@@ -38,11 +38,14 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const tokenResponse = await loginUser({
-      username,
-      password,
-      remember,
-    });
+    const tokenResponse = await loginUser(
+      {
+        username,
+        password,
+        remember,
+      },
+      API_URL
+    );
 
     if (!tokenResponse || !tokenResponse.access_token) {
       setError("Invalid username or password");

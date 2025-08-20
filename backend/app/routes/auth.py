@@ -54,7 +54,7 @@ def signup():
     db.session.add(new_user)
     db.session.commit()
 
-    return jsonify({"msg": "User created successfully"}), 200
+    return jsonify({"msg": "User created successfully", "success": True}), 200
 
 
 @auth.route('/profile')

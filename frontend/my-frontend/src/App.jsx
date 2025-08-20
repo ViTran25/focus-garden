@@ -12,11 +12,13 @@ export const AppContext = createContext({
   playSound: () => {},
   pauseSound: () => {},
   stopSound: () => {},
+  API_URL: "",
 });
 
 function App() {
   // Token for authorization
   const { token, setToken } = useToken();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // isActive for Nav-burger
   const [isActive, setIsActive] = useState(false);
@@ -175,7 +177,14 @@ function App() {
         {/*Main page section*/}
         <div className="hero-body">
           <AppContext.Provider
-            value={{ token, setToken, playSound, pauseSound, stopSound }}
+            value={{
+              token,
+              setToken,
+              playSound,
+              pauseSound,
+              stopSound,
+              API_URL,
+            }}
           >
             <Outlet />
           </AppContext.Provider>

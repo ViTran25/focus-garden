@@ -2,9 +2,9 @@ import { useContext, useState } from "react";
 import { AppContext } from "../App";
 import { Navigate } from "react-router-dom";
 
-async function signupUser(userInfo) {
+async function signupUser(userInfo, url) {
   try {
-    const response = await fetch("http://127.0.0.1:5000/signup", {
+    const response = await fetch(`${url}/signup`, {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -15,24 +15,31 @@ async function signupUser(userInfo) {
     if (!response.ok) {
       throw new Error(`HTTP error: Status ${response.status}`);
     }
-    console.log(response.json());
-    return true;
+
+    return response.json();
   } catch (err) {
     console.log(err);
-    return false;
   }
 }
 
 function Signup() {
-  const { token } = useContext(AppContext);
+  const { token, API_URL } = useContext(AppContext);
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [success, setSuccess] = useState(false);
 
+  // Handling Error Messages
+  const [error, setError] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await signupUser({ username, email, password });
+    const result = await signupUser({ username, email, password }, API_URL);
+    if (!result.success) {
+      setError(result.msg);
+      return;
+    }
+
     setSuccess(result);
   };
 
@@ -52,6 +59,7 @@ function Signup() {
       >
         Sign Up
       </h1>
+      {error && <div className="notification is-danger">{error}</div>}
       <form
         action=""
         onSubmit={handleSubmit}

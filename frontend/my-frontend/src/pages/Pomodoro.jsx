@@ -5,7 +5,8 @@ import "react-circular-progressbar/dist/styles.css";
 
 function Pomodoro() {
   // Get token
-  const { token, playSound, pauseSound, stopSound } = useContext(AppContext);
+  const { token, playSound, pauseSound, stopSound, API_URL } =
+    useContext(AppContext);
 
   const [time, setTime] = useState(0);
   const [pauseTime, setPauseTime] = useState(0);
@@ -26,7 +27,7 @@ function Pomodoro() {
   // Fetching Functions----------------------------
   const getSession = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/pomodoro/", {
+      const response = await fetch(`${API_URL}/api/pomodoro/`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -46,7 +47,7 @@ function Pomodoro() {
 
   const getDailyMinutes = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/pomodoro/daily", {
+      const response = await fetch(`${API_URL}/api/pomodoro/daily`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -66,7 +67,7 @@ function Pomodoro() {
 
   const startFetch = async (type, duration) => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/pomodoro/start", {
+      const response = await fetch(`${API_URL}/api/pomodoro/start`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -94,15 +95,12 @@ function Pomodoro() {
 
   const endFetch = async (id) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/api/pomodoro/end/${id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/api/pomodoro/end/${id}`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error: Status ${response.status}`);
@@ -114,17 +112,14 @@ function Pomodoro() {
 
   const pauseOrResumeFetch = async (id, action, time) => {
     try {
-      const response = await fetch(
-        `http://127.0.0.1:5000/api/pomodoro/${action}/${id}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ time: time }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/pomodoro/${action}/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ time: time }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error: Status ${response.status}`);
@@ -136,7 +131,7 @@ function Pomodoro() {
 
   const cancelFetch = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/pomodoro/${id}`, {
+      const response = await fetch(`${API_URL}/api/pomodoro/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

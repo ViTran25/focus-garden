@@ -4,7 +4,7 @@ import { AppContext } from "../App";
 
 function AddTask({ onClose, onCreate }) {
   // Get token
-  const { token } = useContext(AppContext);
+  const { token, API_URL } = useContext(AppContext);
 
   // States for login information
   const [title, setTitle] = useState("");
@@ -16,7 +16,7 @@ function AddTask({ onClose, onCreate }) {
   const sendTask = async (task) => {
     console.log(task);
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/tasks/", {
+      const response = await fetch(`${API_URL}/api/tasks/`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -222,11 +222,11 @@ function Task() {
   const [showHistory, setShowHistory] = useState(false);
 
   // Get token
-  const { token } = useContext(AppContext);
+  const { token, API_URL } = useContext(AppContext);
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/tasks/", {
+      const response = await fetch(`${API_URL}/api/tasks/`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -249,7 +249,7 @@ function Task() {
 
   const finishTask = async (id) => {
     try {
-      const response = await fetch(`http://127.0.0.1:5000/api/tasks/${id}`, {
+      const response = await fetch(`${API_URL}/api/tasks/${id}`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",
@@ -268,7 +268,7 @@ function Task() {
 
   const fetchHistory = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:5000/api/tasks/history", {
+      const response = await fetch(`${API_URL}/api/tasks/history`, {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
